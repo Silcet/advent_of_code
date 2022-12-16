@@ -1,58 +1,140 @@
+use std::cmp::Ordering;
+use enum_iterator::{Sequence, next_cycle, previous_cycle};
+
+#[derive(PartialEq, Sequence, Clone, Copy)]
 enum RPS {
     Rock = 1,
     Paper = 2,
     Scissors = 3,
 }
 
-enum Game {
-    Lost = 0,
-    Draw = 3,
-    Win = 6,
+impl RPS {
+    fn game_value(&self, other: &Self) -> u32 {
+        if self > other {
+            6
+        } else if self == other {
+            3
+        } else {
+            0
+        }
+    }
+
+    fn choose_outcome(&self, instruction: Instruction) -> Self {
+        match instruction {
+            Instruction::Lose => previous_cycle(self).unwrap(),
+            Instruction::Draw => self.clone(),
+            Instruction::Win => next_cycle(self).unwrap()
+        }
+    }
 }
 
-fn part_one(input: &String) {
-    let result: i32 = input
+impl From<char> for RPS {
+    fn from(shape: char) -> Self {
+        match shape {
+            'A' | 'X' => Self::Rock,
+            'B' | 'Y' => Self::Paper,
+            'C' | 'Z' => Self::Scissors,
+            _ => panic!("Invalid shape!")
+        }
+    }
+}
+
+impl PartialOrd for RPS {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        match (self, other) {
+            (Self::Rock, Self::Scissors) => Some(Ordering::Greater),
+            (Self::Rock, Self::Paper) => Some(Ordering::Less),
+            (Self::Paper, Self::Rock) => Some(Ordering::Greater),
+            (Self::Paper, Self::Scissors) => Some(Ordering::Less),
+            (Self::Scissors, Self::Paper) => Some(Ordering::Greater),
+            (Self::Scissors, Self::Rock) => Some(Ordering::Less),
+            _ => Some(Ordering::Equal)
+        }
+    }
+}
+
+enum Instruction {
+    Lose = 0,
+    Draw = 3,
+    Win = 6
+}
+
+impl From<char> for Instruction {
+    fn from(shape: char) -> Self {
+        match shape {
+            'X' => Self::Lose,
+            'Y' => Self::Draw,
+            'Z' => Self::Win,
+            _ => panic!("Invalid shape!")
+        }
+    }
+}
+
+fn part_one(input: &String) -> u32 {
+    let result: u32 = input
         .split('\n')
         .filter_map(|line| {
-            println!("{}", line);
             if line.len() == 0 {
                 return None;
             }
-            let instruction: Vec<u32> = line.chars().map(|x| x as u32).collect();
-            let game_result = (instruction[2] as i32 - instruction[0] as i32 - 23).abs();
-            println!("{}", game_result);
-            let score = if game_result == 0 {
-                3
-            } else if game_result == 1 {
-                6
-            } else {
-                0
-            } + match instruction[2] {
-                88 => 1,
-                89 => 2,
-                90 => 3,
-                _ => panic!("Wrong tool"),
-            };
-            println!("{}", score);
-            Some(score)
+            let shapes: Vec<RPS> = line.chars().filter(|c| !c.is_whitespace()).map(|c| RPS::from(c)).collect();
+            
+            Some(shapes[1].game_value(&shapes[0]) + shapes[1] as u32)
         })
         .sum();
 
-    println!("Part one result: {}", result);
+    result
+}
+
+fn part_two(input: &String) -> u32 {
+    let result: u32 = input
+        .split('\n')
+        .filter_map(|line| {
+            if line.len() == 0 {
+                return None;
+            }
+            let shapes: Vec<char> = line.chars().filter(|c| !c.is_whitespace()).collect();
+            let oponent = RPS::from(shapes[0]);
+            let instruction = Instruction::from(shapes[1]);
+            
+            Some(instruction as u32 + oponent.choose_outcome(instruction) as u32)
+        })
+        .sum();
+
+    result
 }
 
 fn main() {
     let input = utils::get_input("https://adventofcode.com/2022/day/2/input".to_string()).unwrap();
 
-    part_one(&input);
+    let result_one = part_one(&input);
+    println!("Part one result: {}", result_one);
+
+    let result_two = part_two(&input);
+    println!("Part two result: {}", result_two);
 }
 
-// Rock     A: 65 X: 88
-// Paper    B: 66 Y: 89
-// Scissors C: 67 Z: 90
-/*
-    88  89  90
-65  23  24  25
-66  22  23  24
-67  21  22  23
-*/
+#[cfg(test)]
+mod tests {
+    use crate::part_one;
+    use crate::part_two;
+
+    #[test]
+    fn part_one_example() {
+        let input = "A Y
+B X
+C Z".to_string();
+        let result = part_one(&input);
+        assert_eq!(result, 15u32);
+    }
+
+    #[test]
+    fn part_two_example() {
+        let input = "A Y
+B X
+C Z".to_string();
+        let result = part_two(&input);
+        assert_eq!(result, 12u32);
+    }
+}
+
