@@ -1,7 +1,12 @@
 pub fn get_input(url: String) -> Result<String, Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
-    let resp = client.get(url).header("Cookie", "session=53616c7465645f5f950bfa8c27fe1ccd7e75f8b963efcc41eb046c34b1099e715c755879e4407b682adb3781792676ed4c772686fd0bc30d56b594c1094628b8").send()?;
+    let resp = client.get(url).header("Cookie", "session=53616c7465645f5fef123f45ead43b143a5574a2f33b1c141db66c57008303c91e463e7090048d5526c9203df3f6d11bf14f05b87dc1e611c8055370fee363e7").send()?;
     Ok(resp.text()?)
+}
+
+pub fn get_day_input(year: u32, day: u8) -> Result<String, Box<dyn std::error::Error>> {
+    let url = format!("https://adventofcode.com/{year}/day/{day}/input");
+    get_input(url)
 }
 
 #[cfg(test)]

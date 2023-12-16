@@ -1,6 +1,4 @@
 [workspace]
 
-members = [
-    "utils",
-    "day*",
-]
+members = ["utils", "2022/day*", "2023/day*"]
+resolver = "2"
