@@ -53,6 +53,7 @@ impl PartialOrd for RPS {
     }
 }
 
+#[derive(Clone)]
 enum Instruction {
     Lose = 0,
     Draw = 3,
@@ -97,7 +98,7 @@ fn part_two(input: &String) -> u32 {
             let oponent = RPS::from(shapes[0]);
             let instruction = Instruction::from(shapes[1]);
             
-            Some(instruction as u32 + oponent.choose_outcome(instruction) as u32)
+            Some(instruction.clone() as u32 + oponent.choose_outcome(instruction) as u32)
         })
         .sum();
 
