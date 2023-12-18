@@ -1,5 +1,5 @@
+use enum_iterator::{next_cycle, previous_cycle, Sequence};
 use std::cmp::Ordering;
-use enum_iterator::{Sequence, next_cycle, previous_cycle};
 
 #[derive(PartialEq, Sequence, Clone, Copy)]
 enum RPS {
@@ -23,7 +23,7 @@ impl RPS {
         match instruction {
             Instruction::Lose => previous_cycle(self).unwrap(),
             Instruction::Draw => self.clone(),
-            Instruction::Win => next_cycle(self).unwrap()
+            Instruction::Win => next_cycle(self).unwrap(),
         }
     }
 }
@@ -34,7 +34,7 @@ impl From<char> for RPS {
             'A' | 'X' => Self::Rock,
             'B' | 'Y' => Self::Paper,
             'C' | 'Z' => Self::Scissors,
-            _ => panic!("Invalid shape!")
+            _ => panic!("Invalid shape!"),
         }
     }
 }
@@ -48,7 +48,7 @@ impl PartialOrd for RPS {
             (Self::Paper, Self::Scissors) => Some(Ordering::Less),
             (Self::Scissors, Self::Paper) => Some(Ordering::Greater),
             (Self::Scissors, Self::Rock) => Some(Ordering::Less),
-            _ => Some(Ordering::Equal)
+            _ => Some(Ordering::Equal),
         }
     }
 }
@@ -57,7 +57,7 @@ impl PartialOrd for RPS {
 enum Instruction {
     Lose = 0,
     Draw = 3,
-    Win = 6
+    Win = 6,
 }
 
 impl From<char> for Instruction {
@@ -66,7 +66,7 @@ impl From<char> for Instruction {
             'X' => Self::Lose,
             'Y' => Self::Draw,
             'Z' => Self::Win,
-            _ => panic!("Invalid shape!")
+            _ => panic!("Invalid shape!"),
         }
     }
 }
@@ -78,8 +78,12 @@ fn part_one(input: &String) -> u32 {
             if line.len() == 0 {
                 return None;
             }
-            let shapes: Vec<RPS> = line.chars().filter(|c| !c.is_whitespace()).map(|c| RPS::from(c)).collect();
-            
+            let shapes: Vec<RPS> = line
+                .chars()
+                .filter(|c| !c.is_whitespace())
+                .map(|c| RPS::from(c))
+                .collect();
+
             Some(shapes[1].game_value(&shapes[0]) + shapes[1] as u32)
         })
         .sum();
@@ -97,7 +101,7 @@ fn part_two(input: &String) -> u32 {
             let shapes: Vec<char> = line.chars().filter(|c| !c.is_whitespace()).collect();
             let oponent = RPS::from(shapes[0]);
             let instruction = Instruction::from(shapes[1]);
-            
+
             Some(instruction.clone() as u32 + oponent.choose_outcome(instruction) as u32)
         })
         .sum();
@@ -106,7 +110,8 @@ fn part_two(input: &String) -> u32 {
 }
 
 fn main() {
-    let input = utils::get_input("https://adventofcode.com/2022/day/2/input".to_string()).unwrap();
+    let mut aoc = utils::AdventOfCode::new(2022, 2);
+    let input = aoc.get_input().unwrap();
 
     let result_one = part_one(&input);
     println!("Part one result: {}", result_one);
@@ -124,7 +129,8 @@ mod tests {
     fn part_one_example() {
         let input = "A Y
 B X
-C Z".to_string();
+C Z"
+        .to_string();
         let result = part_one(&input);
         assert_eq!(result, 15u32);
     }
@@ -133,9 +139,9 @@ C Z".to_string();
     fn part_two_example() {
         let input = "A Y
 B X
-C Z".to_string();
+C Z"
+        .to_string();
         let result = part_two(&input);
         assert_eq!(result, 12u32);
     }
 }
-

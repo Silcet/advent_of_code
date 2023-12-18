@@ -32,7 +32,8 @@ fn part_two(input: &String) {
 }
 
 fn main() {
-    let input = utils::get_input("https://adventofcode.com/2022/day/1/input".to_string()).unwrap();
+    let mut aoc = utils::AdventOfCode::new(2022, 1);
+    let input = aoc.get_input().unwrap();
 
     part_one(&input);
 

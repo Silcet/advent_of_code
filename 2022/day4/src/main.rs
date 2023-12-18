@@ -74,7 +74,8 @@ fn part_two(input: &String) -> usize {
 }
 
 fn main() {
-    let input = utils::get_input("https://adventofcode.com/2022/day/4/input".to_string()).unwrap();
+    let mut aoc = utils::AdventOfCode::new(2022, 4);
+    let input = aoc.get_input().unwrap();
 
     let result_one = part_one(&input);
     println!("Part one result: {}", result_one);
