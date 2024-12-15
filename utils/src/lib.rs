@@ -1,12 +1,12 @@
 use std::fs;
 use std::path::PathBuf;
 
-const SESSION_KEY: &str = "53616c7465645f5fef123f45ead43b143a5574a2f33b1c141db66c57008303c91e463e7090048d5526c9203df3f6d11bf14f05b87dc1e611c8055370fee363e7";
+const SESSION_KEY: &str = "53616c7465645f5f56a795a2d21d25f0e721f189c29881064fd18bca0b0ca1cbdadf9eea89e0529b5256f301fc5e9ed3915e295f7582b0f301697436a0b4f6a0";
 
 pub struct AdventOfCode {
     url: String,
     cache: PathBuf,
-    input: Option<String>
+    input: Option<String>,
 }
 
 impl AdventOfCode {
@@ -19,7 +19,7 @@ impl AdventOfCode {
         Self {
             url,
             cache: path,
-            input: None
+            input: None,
         }
     }
 
@@ -40,7 +40,10 @@ impl AdventOfCode {
 
     fn fetch_from_url(&self) -> Result<String, Box<dyn std::error::Error>> {
         let client = reqwest::blocking::Client::new();
-        let resp = client.get(&self.url).header("Cookie", format!("session={SESSION_KEY}")).send()?;
+        let resp = client
+            .get(&self.url)
+            .header("Cookie", format!("session={SESSION_KEY};"))
+            .send()?;
         Ok(resp.text()?)
     }
 
@@ -49,10 +52,12 @@ impl AdventOfCode {
     }
 
     fn cache_input(&self) -> Result<(), Box<dyn std::error::Error>> {
-        Ok(fs::write(self.cache.as_path(), self.input.as_ref().unwrap())?)
+        Ok(fs::write(
+            self.cache.as_path(),
+            self.input.as_ref().unwrap(),
+        )?)
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -84,4 +89,3 @@ mod tests {
     //     assert!(result.is_ok());
     // }
 }
-
