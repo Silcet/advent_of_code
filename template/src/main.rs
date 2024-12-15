@@ -9,7 +9,7 @@ fn part_two(input: &String) -> u32 {
 }
 
 fn main() {
-    let mut aoc = utils::AdventOfCode::new(2024, 1);
+    let mut aoc = utils::AdventOfCode::new(2024, {{day}});
     let input = aoc
         .get_input()
         .expect("Failed to get an input for the problem");
