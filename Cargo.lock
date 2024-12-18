@@ -143,6 +143,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "day4_24"
+version = "0.1.0"
+dependencies = [
+ "utils",
+]
+
+[[package]]
 name = "encoding_rs"
 version = "0.8.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"
